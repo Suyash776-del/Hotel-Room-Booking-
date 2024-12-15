@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        let rooms = [
+    { number: 101, type: 'Standard', price: 3000, available: true },
+    { number: 102, type: 'Standard', price: 3000, available: true },
+    { number: 103, type: 'Standard', price: 3000, available: true },
+    { number: 104, type: 'Standard', price: 3000, available: true },
+    { number: 105, type: 'Standard', price: 3000, available: true },
+    { number: 106, type: 'Deluxe', price: 7000, available: true },
+    { number: 107, type: 'Deluxe', price: 7000, available: true },
+    { number: 108, type: 'Deluxe', price: 7000, available: true },
+    { number: 109, type: 'Deluxe', price: 7000, available: true },
+    { number: 110, type: 'Deluxe', price: 7000, available: true }
+];
+
+let bookings = {};
+
+function checkAvailability() {
+    const availableRoomsDiv = document.getElementById('available-rooms');
+    availableRoomsDiv.innerHTML = '<h3>Available Rooms:</h3>';
+    
+    rooms.forEach(room => {
+        if (room.available) {
+            availableRoomsDiv.innerHTML += <p>Room ${room.number} (${room.type}) - Rs ${room.price}</p>;
+        }
+    });
+    
+    if (!availableRoomsDiv.innerHTML.includes('Room')) {
+        availableRoomsDiv.innerHTML += '<p>No rooms available.</p>';
+    }
+}
+
+function bookRoom(event) {
+    event.preventDefault();
+    
+    const roomNumber = parseInt(document.getElementById('room-number').value);
+    const customerName = document.getElementById('customer-name').value;
+
+    const room = rooms.find(r => r.number === roomNumber);
+    
+    if (room && room.available) {
+        room.available = false; 
+        bookings[roomNumber] = customerName; 
+        alert(Room ${roomNumber} booked successfully for ${customerName}.);
+        
+        document.getElementById('booking-form').reset();
+        checkAvailability(); 
+    } else {
+        alert(Room ${roomNumber} is not available.);
+    }
+}
+
+function cancelBooking(event) {
+   event.preventDefault();
+   
+   const roomNumber = parseInt(document.getElementById('cancel-room-number').value);
+   
+   if (bookings[roomNumber]) {
+       const customerName = bookings[roomNumber];
+       delete bookings[roomNumber]; 
+       
+       const room = rooms.find(r => r.number === roomNumber);
+       if (room) room.available = true; 
+       
+       alert(Booking for Room ${roomNumber} has been cancelled.);
+       document.getElementById('cancellation-form').reset();
+       checkAvailability(); 
+   } else {
+       alert(No booking found for Room ${roomNumber}.);
+   }
+}
+
+function showBookingDetails() {
+   const bookingsDiv = document.getElementById('bookings');
+   bookingsDiv.innerHTML = '<h3>Booking Details:</h3>';
+   
+   if (Object.keys(bookings).length === 0) {
+       bookingsDiv.innerHTML += '<p>No bookings found.</p>';
+       return;
+   }
+   
+   for (const [roomNumber, customerName] of Object.entries(bookings)) {
+       bookingsDiv.innerHTML += <p>${customerName} has booked Room ${roomNumber}.</p>;
+   }
+}
+
+    </script>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
+
+main {
+    padding: 20px;
+}
+
+section {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+h2 {
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+input {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-top: 5px;
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#available-rooms, #bookings {
+    margin-top: 15px;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hotel Booking System</h1>
+    </header>
+
+    <main>
+        <section id="availability">
+            <h2>Check Room Availability</h2>
+            <button onclick="checkAvailability()">Check Availability</button>
+            <div id="available-rooms"></div>
+        </section>
+
+        <section id="booking">
+            <h2>Book a Room</h2>
+            <form id="booking-form" onsubmit="bookRoom(event)">
+                <label for="room-number">Room Number:</label>
+                <input type="number" id="room-number" required>
+
+                <label for="customer-name">Customer Name:</label>
+                <input type="text" id="customer-name" required>
+
+                <button type="submit">Book Room</button>
+            </form>
+        </section>
+
+        <section id="cancellation">
+            <h2>Cancel Booking</h2>
+            <form id="cancellation-form" onsubmit="cancelBooking(event)">
+                <label for="cancel-room-number">Room Number:</label>
+                <input type="number" id="cancel-room-number" required>
+
+                <button type="submit">Cancel Booking</button>
+            </form>
+        </section>
+
+        <section id="booking-details">
+            <h2>Booking Details</h2>
+            <button onclick="showBookingDetails()">Show Booking Details</button>
+            <div id="bookings"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Hotel Booking System. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
